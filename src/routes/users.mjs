@@ -8,6 +8,7 @@ import {
 import { mockUsers } from "../utils/constants.mjs";
 import { createUserValidationSchema } from "../utils/validationSchemas.mjs";
 import { resolveIndexByUserId } from "../utils/middlewares.mjs";
+import session from "express-session";
 
 const router = Router();
 
@@ -21,6 +22,15 @@ router.get(
         .isLength({ min: 3, max: 10 })
         .withMessage("Must be at least 3-10 characters"), 
         (req,res) => {
+            console.log(req.session);
+            console.log(req.session.id);
+            req.sessionStore.get(req.session.id, (err, sessionData) => {
+                if (err) {
+                    console.log(err);
+                    throw err;
+                }
+                console.log(sessionData);
+            })
             const result = validationResult(req);
             console.log(result);  
             const {
