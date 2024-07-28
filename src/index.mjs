@@ -31,6 +31,21 @@ app.post('/api/auth',
     }
 );
 
+app.get("/api/auth/status", (req, res) => {
+    console.log(`Inside /auth/status endpoint`);
+    console.log(req.user);
+    console.log(req.session)
+    return req.user ? res.send(req.user) : res.sendStatus(401);
+})
+
+app.post("/api/auth/logout", (req, res) => {
+    if (!req.user) return res.sendStatus(401);
+    req.logOut((err) => {
+        if (err) return res.sendStatus(400);
+        res.send(200);
+    });
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
