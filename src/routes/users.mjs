@@ -31,6 +31,7 @@ router.get(
                     console.log(err);
                     throw err;
                 }
+                console.log("Inside Session Store Get")
                 console.log(sessionData);
             })
             const result = validationResult(req);
@@ -64,7 +65,7 @@ router.post(
 
        console.log(data);
        data.password = hashPassword(data.password)
-       console.log(data);
+       console.log(data); 
        const newUser = new User(data);
        try {
         const savedUser = await newUser.save();
