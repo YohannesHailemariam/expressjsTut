@@ -6,7 +6,7 @@ import { comparePassword } from "../utils/helpers.mjs";
 
 passport.serializeUser((user, done) => {
     console.log(`Inside Serialize User`);
-    console.log(user)
+    console.log(user);
     done(null, user.id);
 });
 
@@ -22,7 +22,7 @@ passport.deserializeUser(async (id, done) => {
     } catch (err) {
         done(err, null);
     }
-})
+});
 
 export default passport.use(
     new Strategy(async (username, password, done) => {

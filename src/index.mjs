@@ -63,6 +63,8 @@ app.get(
     '/api/auth/discord/redirect', 
     passport.authenticate("discord"), 
     (req, res) => {
+        console.log(req.session);
+        console.log(req.user);
         res.sendStatus(200);
     }
 );
