@@ -111,5 +111,6 @@ app.get('/api/cart', (req, res) => {
 })
 
 
-{/*just a random comment to maintain my github daily commit streak*/}
-
+//client_secret = rG8JnXtaP22IuIuB6CWVOydKqQzuiPsr
+//client_id = 1268870997377945653
+//redirect_url = http://localhost:5000/api/auth/discord/redirect
