@@ -11,6 +11,7 @@ import { resolveIndexByUserId } from "../utils/middlewares.mjs";
 import session from "express-session";
 import {User} from "../mongoose/schemas/user.mjs";
 import { hashPassword } from "../utils/helpers.mjs";
+import { getUserByIdHandler } from "../handlers/users.mjs";
 
 const router = Router();
 
@@ -47,12 +48,7 @@ router.get(
         }
 )
 
-router.get("/api/users/:id", resolveIndexByUserId, (req,res) => {
-    const { findUserIndex } = req;
-    const findUser = mockUsers[findUserIndex];
-    if (!findUser) return res.sendStatus(404);
-    return res.send(findUser);
-});
+router.get("/api/users/:id", resolveIndexByUserId, getUserByIdHandler);
 
 router.post(
     "/api/users",
