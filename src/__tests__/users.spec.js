@@ -1,5 +1,26 @@
-const { getUserByIdHandler } = require("../handlers/users.mjs");
-const { mockUsers } = require("../utils/constants.mjs");
+import * as validator from "express-validator";
+import * as helpers from "../utils/helpers.mjs";
+import { getUserByIdHandler, createUserHandler } from "../handlers/users.mjs";
+import { User } from "../mongoose/schemas/user.mjs";
+
+jest.mock('express-validator', () => ({
+    validationResult: jest.fn(() => ({
+        isEmpty: jest.fn(() => false),
+        array: jest.fn(() => [{ msg: "Invalid Field" }]),
+    })),
+    matchedData: jest.fn(() => ({
+        id: 1,
+        username: "test",
+        password: "password",
+        displayName: "test_name",
+    })),
+}));
+
+jest.mock('../utils/helpers.mjs', () => ({
+    hashPassword: jest.fn((password) => `hashed_${password}`),
+}))
+
+jest.mock('../mongoose/schemas/user.mjs');
 
 const mockRequest = {
     findUserIndex: 1,
@@ -7,7 +28,8 @@ const mockRequest = {
 
 const mockResponse = {
     sendStatus: jest.fn(),
-    send: jest.fn()
+    send: jest.fn(),
+    status: jest.fn(() => mockResponse),
 };
 
 describe('get users', () => {
@@ -25,5 +47,55 @@ describe('get users', () => {
         expect(mockResponse.sendStatus).toHaveBeenCalledWith(404);
         expect(mockResponse.sendStatus).toHaveBeenCalledTimes(1);
         expect(mockResponse.send).not.toHaveBeenCalled();
+    })
+});
+
+describe('create users', () => {
+    const mockRequest = {};
+    it('should return status of 400 when there are errors', async () => {
+       await createUserHandler(mockRequest, mockResponse)
+       expect(validator.validationResult).toHaveBeenCalled();
+       expect(validator.validationResult).toHaveBeenCalledWith(mockRequest);
+       expect(mockResponse.status).toHaveBeenCalledWith(400);
+       expect(mockResponse.send).toHaveBeenCalledWith([{ msg: "Invalid Field" }]);
+    });
+
+    it('should return the status 0f 201 and the user created', async () => {
+        jest.spyOn(validator, 'validationResult').mockImplementationOnce(() => ({
+            isEmpty: jest.fn(() => true),
+        }));
+
+        const saveMethod = jest.spyOn(User.prototype, "save").mockResolvedValueOnce();
+
+        await createUserHandler(mockRequest, mockResponse);
+        expect(validator.matchedData).toHaveBeenCalledWith(mockRequest);
+        expect(helpers.hashPassword).toHaveBeenCalledWith("password");
+        expect(helpers.hashPassword).toHaveBeenCalledWith("hashed_password");
+        expect(User).toHaveBeenCalledWith({
+            username: "test",
+            password: "hashed_password",
+            displayName: "test_name",
+        });
+
+        expect(saveMethod).toHaveBeenCalled();
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.send).toHaveBeenCalledWith({
+            id: 1,
+            username: "test",
+            password: "password",
+            displayName: "test_name",
+        });
+    });
+
+    it('send status of 400 when database fails ro save user', async () => {
+        jest.spyOn(validator, 'validationResult').mockImplementationOnce(() => ({
+            isEmpty: jest.fn(() => true),
+        }));
+        const saveMethod = jest
+        .spyOn(User.prototype, "save")
+        .mockImplementationOnce(() => Promise.reject("Failed to save user"));
+        await createUserHandler(mockRequest, mockResponse);
+        expect(saveMethod).toHaveBeenCalled();
+        expect(mockResponse.sendStatus).toHaveBeenCalledWith(400);
     })
 });
