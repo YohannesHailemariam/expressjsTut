@@ -6,8 +6,8 @@ import { mockUsers } from "./utils/constants.mjs";
 import passport from "passport";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo"
-//import "./strategies/local-strategy.mjs";
-import "./strategies/discord-strategy.mjs";
+import "./strategies/local-strategy.mjs";
+//import "./strategies/discord-strategy.mjs";
 
 const app = express();
 
