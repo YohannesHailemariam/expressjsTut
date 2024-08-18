@@ -1,5 +1,5 @@
 import express from "express";
-import routes from "./routes/index.mjs"
+import routes from "./routes/index.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import { mockUsers } from "./utils/constants.mjs";
