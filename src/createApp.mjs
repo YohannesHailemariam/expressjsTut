@@ -5,6 +5,8 @@ import session from "express-session";
 import passport from "passport";
 import MongoStore from "connect-mongo";
 import mongoose from "mongoose";
+import "./strategies/local-strategy.mjs";
+
 
 export function createApp(app) {
     app.use(express.json());
