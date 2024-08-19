@@ -13,6 +13,16 @@ describe('create user and login', () => {
         app = createApp();
     })
 
+    it('should create the user', async () => {
+        const response = await request(app).post('/api/users').send({
+            username: 'adam123',
+            password: 'password',
+            displayName: 'Adam The Developer',
+        }); 
+
+        expect(response.statusCode).toBe(201);
+    })
+
     afterAll(async () => {
         await mongoose.connection.dropDatabase();
         await mongoose.connection.close();
