@@ -1,9 +1,6 @@
-import express from "express";
 import mongoose from "mongoose";
-import MongoStore from "connect-mongo"
 import { createApp } from "./createApp.mjs";
-import "./strategies/local-strategy.mjs";
-//import "./strategies/discord-strategy.mjs";
+
 
 mongoose
     .connect("mongodb://localhost/expTut")
